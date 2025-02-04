@@ -1,2 +1,5 @@
-console.log('Hello, world!');
-console.log("Don't worry, be happy!");
+function sayHello() {
+    console.log("Привет, мир!");
+}
+
+sayHello();
