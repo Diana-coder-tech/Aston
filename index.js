@@ -1,1 +1,2 @@
-console.log('Hello, world! How are you?!');
+console.log('Hello, world!');
+console.log("Don't worry, be happy!");
