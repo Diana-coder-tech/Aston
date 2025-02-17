@@ -1,0 +1,229 @@
+1. Написать ответ - почему массивы в JS являются "неправильными" и совмещают в себе несколько структур данных? Какие ?
+Потому что они гетерогенные (могут хранить в себе данные разных типов) и динамические (позволяют изменять длину массива).  1
+
+Они совмещают в себе следующие структуры данных: стек, очередь, двустороннюю очередь и упорядоченный список.
+
+2. Привязать контекст объекта к функции logger, чтобы при вызове this.item выводило - some value (Привязать через bind, call, apply)
+
+function logger() {
+    console.log(`I output only external context: ${this.item}`);
+}
+
+const obj = { item: "some value" };
+
+Привязка через bind:
+const loggerValue = logger.bind(obj);
+loggerValue();
+
+Привязка через call:
+logger.call(obj);
+
+Привязка через apply:
+logger.apply(obj);
+
+3.1 this: 
+
+const obj = {
+    a: 1,
+    e: (function () {
+        return () => {
+            console.log(this.a);
+        };
+    })(),
+};
+
+
+obj.e(); // 1
+obj.e.call({ a: 2 }); // 1 (игнорирует `call`, `this` всё равно ссылается на `obj`)
+
+3.2 this:
+
+const obj = {
+    child: {
+        i: 10,
+        b: () => console.log(this.i, this),
+        c() {
+            console.log(this.i, this);
+        },
+    }
+};
+
+obj.child.b(); // undefined, тк стрелочная функция берет this не там, где она была создана, а из внешнего контекста, те не из child, а из глобального объекта window/globalThis
+obj.child.c(); // 10
+
+3.3 this:
+
+function foo() {
+     const x = 10;
+     return {
+         x: 20,
+         bar: () => {
+             console.log(this.x);
+         },
+         baz: function () {
+             console.log(this.x);
+         }
+     };
+ }
+
+ const obj1 = foo();
+ obj1.bar(); // undefined
+ obj1.baz(); // 20
+
+ const obj2 = foo.call({ x: 30 });
+ 
+ let y = obj2.bar; 
+ let z = obj2.baz; 
+ y();   // 30
+ z();   // undefined (потому что `this` в обычной функции определяется во время вызова, а `z();` вызывается без объекта)
+ 
+ obj2.bar();    //  30 (стрелочная функция, this внутри неё был зафиксирован при создании в foo().
+foo() был вызван с this = { x: 30 })
+ obj2.baz();    //  20 (обычная функция. this в обычной функции определяется в момент вызова, то есть this === obj2.
+obj2.x === 20)
+
+4.1 Массивы:
+
+- Создайте массив чисел и найдите его сумму разными способами.
+const arr = [1, 2, 3];
+const result = arr.reduce(function(acc, element) {
+    return acc + element;
+}, 0);
+
+function sum(num1, num2, num3) {
+    return num1 + num2 + num3;
+}
+
+function sum(arr) {
+    let res = 0;
+    for (let i = 0; i < arr.length; i++) {
+     res += arr[i];
+    } 
+    return res;
+}
+
+function sum(arr) {
+    let res = 0;
+    arr.forEach(num => res += num);
+    return res;
+}
+
+- Создайте массив строк и объедините их в одну строку разными способами.
+const stringArr = ['a', 'b', 'c'];
+
+const joined = stringArr.join('');
+
+const joined = stringArr.reduce((acc, str) => acc + str, '');
+
+function joined(stringArr) {
+    let res = '';
+    for (const str of stringArr) {
+        res += str;
+    }
+    return result;
+}
+
+- Найдите максимальный и минимальный элементы в массиве чисел разными способами.
+const min = Math.min(...arr);
+const max = Math.max(...arr);
+
+const min = arr.reduce((acc, num) => num < acc ? num : acc, arr[0]);
+const max = arr.reduce((acc, num) => num > acc ? num : acc, arr[0]);
+
+let min = arr[0];
+let max = arr[0];
+arr.forEach(num => {
+    if (num < min) min = num;
+    if (num > min) max = num;
+});
+
+4.2 Stack (стек):
+
+- Реализуйте стек с использованием массива.
+class Stack {
+constructor() {
+    this.stack = [];
+}
+
+// добавляем элемент в стек
+push(element) {
+this.stack.push(element);
+}
+
+// удаляем элемент
+pop() {
+    if (this.isEmpty()) {
+    throw new Error('Stack is empty);
+}
+return this.stack.pop();
+}
+
+// Просмотр верхнего элемента без удаления
+peek() {
+    if (this.isEmpty()) {
+throw new Error('Stack is empty);
+    }
+    return this.stack[this.stack.length - 1];
+}
+
+// Проверка, пуст ли стек
+isEmpty() {
+   return this.stack.length === 0;
+}
+
+// Получение размера стека
+size() {
+return this.stack.length;
+}
+}
+
+4.3 Queue (очередь):
+
+- Реализуйте очередь с использованием массива.
+
+class Queue {
+    constructor() {
+        this.queue = [];
+    }
+
+    addQueue(element) {
+        this.queue.push(element);
+    }
+
+    deleteQueue() {
+        if (this.isEmpty()) {
+            throw new Error('Queue is empty');
+        }
+        return this.queue.shift();
+    }
+
+    watchLast() {
+        if(this.isEmpty()) {
+            throw new Error('Queue is empty');
+        }
+        return this.queue[0];
+    }
+    isEmpty() {
+   return this.queue.length === 0;
+}
+size() {
+return this.queue.length;
+}
+}
+- Имитируйте работу очереди на примере ожидания на кассе.
+
+function simulatedQueue() {
+    const queue = new Queue;
+
+    queue.addQueue('1 buyer');
+    queue.addQueue('2 buyer');
+    queue.addQueue('2 buyer');
+
+console.log("Here is people:", queue.queue);
+
+    while (!queue.isEmpty()) {
+        const servedBuyer = queue.deleteQueue();
+         console.log(`${servedBuyer} is served`);
+    }
+console.log("Queue is empty:", queue.isEmpty());
+}
