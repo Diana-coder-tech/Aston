@@ -1,0 +1,85 @@
+1. Проблема в том, что массив food объявлен в Hamster.prototype, а не внутри самого объекта. Нужно, чтобы у каждого хомяка был свой собственный массив food, нужно объявлять его внутри конструктора:
+function Hamster() {
+  this.food = []; // Теперь у каждого хомяка будет свой массив
+}
+
+2. 1 способ
+
+class Animal {
+
+  constructor(name) {
+    this.name = name;
+  }
+
+}
+
+class Rabbit extends Animal {
+  constructor(name) {
+    super(name);
+    this.created = Date.now();
+  }
+}
+
+let rabbit = new Rabbit("Белый кролик"); 
+alert(rabbit.name); // "Белый кролик"
+
+// Ошибка была в том, что пропустили super()
+
+2 способ - не наследовать Animal, просто создать класс Rabbit
+
+class Rabbit {
+    constructor(name) {
+        this.name = name;
+        this.created = Date.now();
+    }
+}
+
+3 способ: Вызвать super() без аргументов, а потом задать this.name
+
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+class Rabbit extends Animal {
+  constructor(name) {
+    super(); // Вызываем super(), но без параметра
+    this.name = name; // Теперь можно работать с this
+    this.created = Date.now();
+  }
+}
+
+4 способ: Использовать Object.setPrototypeOf
+
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+class Rabbit {
+  constructor(name) {
+    let animal = new Animal(name);
+    Object.setPrototypeOf(this, animal); // Устанавливаем прототип вручную
+    this.created = Date.now();
+  }
+}
+
+3.
+class A {
+    constructor() {
+
+    }
+
+    arrFunc = () => {
+        console.log('wtf', this === i) 
+    }
+}
+
+var i = new A();
+i.arrFunc(); // wtf true
+
+console.log(i.hasOwnProperty('arrFunc')); // true
+// Метод hasOwnProperty проверяет, является ли свойство собственным (а не унаследованным из prototype).
+Так как arrFunc объявлена как поле класса, она создаётся не в prototype, а как собственное свойство экземпляра i
