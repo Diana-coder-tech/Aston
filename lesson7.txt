@@ -1,0 +1,122 @@
+1. Написать собственную реализацию методов массивов: some, reduce, map
+
+Array.prototype.mySome = function(callback) {
+  for (let i = 0; i < this.length; i++) {
+    if (callback(this[i], i, this)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+Array.prototype.myReduce = function(callback, initialValue) {
+  let accumulator = initialValue === undefined ? this[0] : initialValue;
+  let startIndex = initialValue === undefined ? 1 : 0;
+  
+  for (let i = startIndex; i < this.length; i++) {
+    accumulator = callback(accumulator, this[i], i, this);
+  }
+  return accumulator;
+};
+
+Array.prototype.myMap = function(callback) {
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    result.push(callback(this[i], i, this));
+  }
+  return result;
+};
+
+2.
+   for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1);
+}
+
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1);
+}
+// 3 3 3 0 1 2
+
+3. Promise.resolve(1)
+    .then((val) => {
+        console.log(val); // 1
+        return val + 1;
+    })
+    .then((val) => {
+        console.log(val); // 2
+    })
+    .then((val) => {
+        console.log(val); // 2
+        return Promise.resolve(3).then((val) => {
+            console.log(val); // 3
+        });
+    })
+    .then((val) => {
+        console.log(val); // 2
+        return Promise.reject(4);
+    })
+    .catch((val) => {
+        console.log(val); 4
+    })
+    .finally((val) => {
+        console.log(val); // undefined
+        return 10;
+    })
+    .then((val) => {
+        console.log(val); // 10
+    });
+
+    4. function F() {
+  // Пустая функция-конструктор
+}
+
+const x = {};
+
+F.prototype =  x;// Перезаписываем прототип конструктора F объектом x
+
+const a = new F();
+
+console.log(a.__proto__ === x) // true
+
+Почему? Так как мы присвоили F.prototype = x, все объекты, созданные через new F(), получают в __proto__ ссылку на x
+
+5.
+const user = {
+  name: 'Bob',
+  funcFunc() {
+    return function() {
+      console.log(this);
+    }
+  },
+  funcArrow() {
+    return () => {
+      console.log(this);
+    }
+  },
+  arrowFunc: () => {
+    return function() {
+      console.log(this);
+    }
+  },
+  arrowArrow: () => {
+    return () => {
+      console.log(this);
+    }
+  },
+};
+
+user.funcFunc()(); // undefined
+user.funcArrow()(); // { name: 'Bob', funcFunc: ..., funcArrow: ..., arrowFunc: ..., arrowArrow: ... }
+user.arrowFunc()(); // undefined
+user.arrowArrow()(); // undefined
+
+6. var a = 1;
+var b = 2;
+
+(function() {
+    var b = 3;
+    a += b;
+})();
+
+console.log(a);  // 4, потому что менялась глобальная а в функции, но локально объявлена она не была 
+console.log(b);  // 2, тк b глобальная осталась неизменной
